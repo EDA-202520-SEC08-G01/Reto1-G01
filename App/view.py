@@ -4,10 +4,18 @@ import logic as l
 default_limit = 1000
 sys.setrecursionlimit(default_limit*10)
 
+default_limit = 1000
+sys.setrecursionlimit(default_limit*10)
+
 def new_logic():
-    
-    catalog = l.new_catalog()
-    print(catalog)
+    """
+        Se crea una instancia del controlador
+    """
+    #TODO: Llamar la función de la lógica donde se crean las estructuras de datos
+    catalog = l.new_logic()
+    return catalog
+
+    pass
 
 def print_menu():
     print("Bienvenido")
@@ -23,20 +31,46 @@ def print_menu():
     print("0- Salir")
 
 def load_data(control):
+    """
+    Carga los datos
+    """
+    #TODO: Realizar la carga de datos
+    catalog, tiempo, tamanio, mas_corto, mas_largo, primeros, ultimos = l.load_data(control)
+    return catalog, tiempo, tamanio, mas_corto, mas_largo, primeros, ultimos
+    pass
 
-    filename = input("Ingrese el nombre del archivo: ")
-    print(l.load_data(control, filename))
 
-def print_data(control):
-    
+def print_data(control, id):
+    """
+        Función que imprime un dato dado su ID
+    """
+    #TODO: Realizar la función para imprimir un elemento
     id = input("Ingrese el indice del dato a consultar: ")
     print(l.get_data(control, id))
+    pass
 
 def print_req_1(control):
     """
         Función que imprime la solución del Requerimiento 1 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 1
+    try:
+        p = int(input("Cantidad de pasajeros a filtrar (1,2,3,5...): ").strip())
+    except:
+        print("Valor inválido.")
+        return
+    res = l.req_1(control, p)
+    print("\n--- Resultado Requerimiento 1 ---")
+    print(f"Tiempo de ejecución (ms): {res['tiempo_ms']}")
+    print(f"Número total de trayectos: {res['total_trayectos']}")
+    print(f"Tiempo promedio (min): {res['prom_duracion_min']}")
+    print(f"Costo total promedio (USD): {res['prom_costo_total']}")
+    print(f"Distancia promedio (millas): {res['prom_dist_millas']}")
+    print(f"Peajes promedio (USD): {res['prom_peajes']}")
+    print(f"Tipo de pago más usado: {res['pago_mas_usado']}")
+    print(f"Propina promedio (USD): {res['propina_promedio']}")
+    print(f"Fecha de inicio más frecuente: {res['fecha_mas_frecuente']}")
+    print("---------------------------------\n")
     pass
 
 
