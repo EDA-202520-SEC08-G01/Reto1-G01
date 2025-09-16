@@ -10,13 +10,15 @@ csv.field_size_limit(2147483647)
 data_dir = os.path.dirname(os.path.realpath('__file__')) + '/Data/'
 
 def new_logic():
-    
+    """
+    Crea el catalogo para almacenar las estructuras de datos
+    """
+    #TODO: Llama a las funciónes de creación de las estructuras de datos
     catalog = {
         "taxis" : al.new_list(),
         "neighborhoods" : al.new_list(),
     }
     return catalog
-
 
 # Funciones para la carga de datos
 
@@ -24,6 +26,7 @@ def load_data(catalog, filename):
     """
     Carga los datos del reto
     """
+    # TODO: Realizar la carga de datos
     inicio = get_time()   
     
     n_archivo = "Data/" + filename
@@ -32,8 +35,8 @@ def load_data(catalog, filename):
 
     for llave in archivo:
 
-        llave["pickup_datetime"] = datetime.datetime.strptime(llave["pickup_datetime"], "%Y-%m-%d %H:%M:%S")
-        llave["dropoff_datetime"] = datetime.datetime.strptime(llave["dropoff_datetime"], "%Y-%m-%d %H:%M:%S")
+        llave["pickup_datetime"] = datetime.strptime(llave["pickup_datetime"], "%Y-%m-%d %H:%M:%S")
+        llave["dropoff_datetime"] = datetime.strptime(llave["dropoff_datetime"], "%Y-%m-%d %H:%M:%S")
         llave["passenger_count"] = int(llave["passenger_count"])
         llave["trip_distance"] = float(llave["trip_distance"])
         llave["pickup_longitude"] = float(llave["pickup_longitude"])
@@ -54,13 +57,15 @@ def load_data(catalog, filename):
         
     filename2 = "Data/nyc-neighborhoods.csv"
     
-    archivo2 = csv.DictReader(open(filename2, encoding='utf-8'))
+    archivo2 = csv.DictReader(open(filename2, encoding='utf-8'), delimiter=";")
 
     for llave2 in archivo2:
-        llave2["borough"] = str(llave2["borough"])
-        llave2["neighborhood"] = str(llave2["neighborhood"])
-        llave2["latitude"] = float(llave2["latitude"])
-        llave2["longitude"] = float(llave2["longitude"])
+        llave2["borough"] = llave2["borough"]
+        llave2["neighborhood"] = llave2["neighborhood"]
+        lat_str = llave2["latitude"].replace(',', '.')
+        lon_str = llave2["longitude"].replace(',', '.')
+        llave2["latitude"] = float(lat_str)
+        llave2["longitude"] = float(lon_str)
 
         al.add_last(catalog["neighborhoods"], llave2)
 
@@ -118,31 +123,197 @@ def load_data(catalog, filename):
     
     return retorno
 
+    pass
 
 # Funciones de consulta sobre el catálogo
 
 def get_data(catalog, id):
-    
+    """
+    Retorna un dato por su ID.
+    """
+    #TODO: Consulta en las Llamar la función del modelo para obtener un dato
     size = catalog["taxis"]["size"]
     if size > 0 and id < size:
         element = al.get_element(catalog["taxis"], id)
         return element
+    size = catalog["taxis"]["size"]
+    if size > 0 and id < size:
+        element = al.get_element(catalog["taxis"], id)
+        return element
+    pass
 
-def req_1(catalog):
+
+def req_1(catalog, pasajeros):
     """
     Retorna el resultado del requerimiento 1
     """
     # TODO: Modificar el requerimiento 1
+    """
+    Calcula información promedio de los trayectos para una cantidad de pasajeros dada.
+    Retorno un diccionario con:
+      - tiempo_ms
+      - total_trayectos
+      - prom_duracion_min
+      - prom_costo_total
+      - prom_dist_millas
+      - prom_peajes
+      - pago_mas_usado (formato "MEDIO - cantidad")
+      - propina_promedio
+      - fecha_mas_frecuente (YYYY-MM-DD)
+    """
+    inicio = get_time()
+
+    n = al.size(catalog["taxis"])
+
+    conteo = 0
+    tiempo_prom = 0.0
+    costo_total = 0.0
+    dist_prom = 0.0
+    tolls_prom = 0.0
+    tip_prom = 0.0
+
+    pagos = {}     # tipo de pago y cantidad
+    fechas = {}
+
+    for i in range(n):
+        e = al.get_element(catalog["taxis"], i)
+        if e["passenger_count"] == pasajeros:
+            conteo += 1
+
+            # duración en minutos
+            dur_min = (e["dropoff_datetime"] - e["pickup_datetime"]).total_seconds() / 60.0
+            tiempo_prom += dur_min
+
+            # promedios solicitados
+            costo_total += e["total_amount"]
+            dist_prom  += e["trip_distance"]
+            tolls_prom += e["tolls_amount"]
+            tip_prom   += e["tip_amount"]
+
+            # pago más usado
+            p = e["payment_type"]
+            pagos[p] = pagos.get(p, 0) + 1
+
+            # fecha de inicio (solo AAAA-MM-DD, sin horas)
+            f = e["pickup_datetime"].strftime("%Y-%m-%d")
+            fechas[f] = fechas.get(f, 0) + 1
+
+    if conteo == 0:
+        end = get_time()
+        return {
+            "tiempo_ms": delta_time(inicio, end),
+            "total_trayectos": 0,
+            "prom_duracion_min": 0.0,
+            "prom_costo_total": 0.0,
+            "prom_dist_millas": 0.0,
+            "prom_peajes": 0.0,
+            "pago_mas_usado": "N/A - 0",
+            "propina_promedio": 0.0,
+            "fecha_mas_frecuente": "N/A"
+        }
+
+    # cálculo de máximos (pago y fecha más frecuente)
+    pago_top, pago_top_conteo = None, -1
+    for k, v in pagos.items():
+        if v > pago_top_conteo:
+            pago_top, pago_top_cnt = k, v
+
+    fecha_top, fecha_top_cnt = None, -1
+    for k, v in fechas.items():
+        if v > fecha_top_cnt:
+            fecha_top, fecha_top_cnt = k, v
+
+    final = get_time()
+    return {
+        "tiempo_ms": round(delta_time(inicio, final), 3),
+        "total_trayectos": conteo,
+        "prom_duracion_min": round(tiempo_prom / conteo, 3),
+        "prom_costo_total": round(costo_total / conteo, 3),
+        "prom_dist_millas": round(dist_prom / conteo, 3),
+        "prom_peajes": round(tolls_prom / conteo, 3),
+        "pago_mas_usado": f"{pago_top} - {pago_top_cnt}",
+        "propina_promedio": round(tip_prom / conteo, 3),
+        "fecha_mas_frecuente": fecha_top
+    }
+    
     pass
 
 
-def req_2(catalog):
-    """
-    Retorna el resultado del requerimiento 2
-    """
-    # TODO: Modificar el requerimiento 2
-    pass
+def req_2(catalog, m_pago):
 
+    inicio = get_time()
+    
+    t_metodos = al.size(catalog["taxis"])
+    filtrados = 0
+    dur_prom = 0 # Minutos
+    c_prom = 0 # Dolares
+    dis_prom = 0 # Millas
+    c_peajes = 0
+    propina_prom = 0
+    frecuencia_pa = {}
+    frecuencia_fech = {}
+    
+    for i in range(t_metodos):
+        pago = al.get_element(catalog["taxis"],i)
+        if pago["payment_type"] == m_pago:
+            filtrados += 1
+            dur_prom += (pago["dropoff_datetime"] - pago["pickup_datetime"]).total_seconds() /60
+            c_prom += pago["total_amount"]
+            dis_prom += pago["trip_distance"]
+            c_peajes += pago["tolls_amount"]
+            propina_prom += pago["tip_amount"]
+            pasajero = pago["passenger_count"]
+            fecha = pago["dropoff_datetime"].strftime("%Y-%m-%d")
+            
+            frecuencia_pa[pasajero] = frecuencia_pa.get(pasajero, 0) + 1
+            frecuencia_fech[fecha] = frecuencia_pa.get(pasajero, 0 ) + 1
+            
+    if filtrados == 0: # hora de procesar toda esta vaina jsjs
+        fin = get_time()
+        return_t = {
+            "Tiempo de ejecucion (ms)": delta_time(inicio,fin),
+            "Trayectos totales": t_metodos,
+            "Trayectos filtrados": 0,
+            "Duracion promedio p/trayecto (min)": 0.0,
+            "Coste promedio (USD)": 0.0,
+            "Distancia promedio (millas)": 0.0,
+            "Coste de peaje promedio": 0.0,
+            "Propina promedio": 0.0,
+            "Pasajero mas frecuente": "N/A",
+            "Frecuencia de fecha": "N/A" 
+        }
+    elif filtrados > 0:
+        fin = get_time()
+        
+        p_frecuente = None
+        frecuencia_p = 0
+        for i in frecuencia_pa:
+            if frecuencia_pa[i] > frecuencia_p:
+                p_frecuente = i
+                frecuencia_p = frecuencia_pa[i]
+        
+        fechamas_frecuente = None
+        frecuencia_f = 0
+        for i in frecuencia_fech:
+            if frecuencia_fech[i] > frecuencia_f:
+                fechamas_frecuente = i
+                frecuencia_f = frecuencia_fech[i]
+        
+        return_t = {
+            "Tiempo de ejecucion (ms)": delta_time(inicio,fin),
+            "Trayectos totales": t_metodos,
+            "Trayectos filtrados": filtrados,
+            "Duracion promedio p/trayecto (min)": dur_prom/t_metodos,
+            "Coste promedio (USD)": c_prom/t_metodos,
+            "Distancia promedio (millas)": dis_prom/t_metodos,
+            "Coste de peaje promedio": c_peajes/t_metodos,
+            "Propina promedio": propina_prom/t_metodos,
+            "Pasajero mas frecuente": p_frecuente,
+            "Frecuencia de fecha":  fechamas_frecuente
+        }  
+    else:
+        raise Exception("Error: hay algo que no funciona en la carga de datos del req 2")
+    return return_t
 
 def req_3(catalog, pago_min, pago_max):
     
@@ -265,8 +436,8 @@ def req_4(catalog, f_costo, f_inicial, f_final):
     
     inicio = get_time()
 
-    fecha_inicial = datetime.datetime.strptime(f_inicial, "%Y-%m-%d").date()
-    fecha_final = datetime.datetime.strptime(f_final, "%Y-%m-%d").date()
+    fecha_inicial = datetime.datetime.strptime(f_inicial, "%Y-%m-%d")
+    fecha_final = datetime.datetime.strptime(f_final, "%Y-%m-%d")
 
     totalviajes = al.size(catalog["taxis"])
     filtrados = 0
