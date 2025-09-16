@@ -80,8 +80,12 @@ def print_req_2(control):
     """
         Función que imprime la solución del Requerimiento 2 en consola
     """
+    
+    m_pago = str(input("Ingrese el metodo de pago a filtrar: "))
+    print(l.req_2(control, m_pago))
+    
     # TODO: Imprimir el resultado del requerimiento 2
-    pass
+
 
 
 def print_req_3(control):

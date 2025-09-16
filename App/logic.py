@@ -1,6 +1,15 @@
 from datetime import datetime
 import math
+from datetime import datetime
+import math
 import time
+import csv
+import os
+from DataStructures import array_list as al
+from DataStructures import single_linked_list as sll
+
+csv.field_size_limit(2147483647)
+data_dir = os.path.dirname(os.path.realpath('__file__')) + '/Data/'
 import csv
 import os
 from DataStructures import array_list as al
@@ -14,6 +23,11 @@ def new_logic():
     Crea el catalogo para almacenar las estructuras de datos
     """
     #TODO: Llama a las funciónes de creación de las estructuras de datos
+    catalog = {
+        "taxis" : al.new_list(),
+        "neighborhoods" : al.new_list(),
+    }
+    return catalog
     catalog = {
         "taxis" : al.new_list(),
         "neighborhoods" : al.new_list(),
@@ -138,9 +152,14 @@ def get_data(catalog, id):
     if size > 0 and id < size:
         element = al.get_element(catalog["taxis"], id)
         return element
+    size = catalog["taxis"]["size"]
+    if size > 0 and id < size:
+        element = al.get_element(catalog["taxis"], id)
+        return element
     pass
 
 
+def req_1(catalog, pasajeros):
 def req_1(catalog, pasajeros):
     """
     Retorna el resultado del requerimiento 1
@@ -241,9 +260,82 @@ def req_2(catalog):
     """
     Retorna el resultado del requerimiento 2
     """
+    
     # TODO: Modificar el requerimiento 2
-    pass
-
+    
+    inicio = get_time()
+    
+    t_metodos = al.size(catalog["taxis"])
+    filtrados = 0
+    dur_prom = 0 # Minutos
+    c_prom = 0 # Dolares
+    dis_prom = 0 # Millas
+    c_peajes = 0
+    propina_prom = 0
+    frecuencia_pa = {}
+    frecuencia_fech = {}
+    
+    for i in range(t_metodos):
+        pago = al.get_element(catalog["taxis"],i)
+        if pago["payment_type"] == m_pago:
+            filtrados += 1
+            dur_prom += (pago["dropoff_datetime"] - pago["pickup_datetime"]).total_seconds() /60
+            c_prom += pago["total_amount"]
+            dis_prom += pago["trip_distance"]
+            c_peajes += pago["tolls_amount"]
+            propina_prom += pago["tip_amount"]
+            pasajero = pago["passenger_count"]
+            fecha = pago["dropoff_datetime"].strftime("%Y-%m-%d")
+            
+            frecuencia_pa[pasajero] = frecuencia_pa.get(pasajero, 0) + 1
+            frecuencia_fech[fecha] = frecuencia_pa.get(pasajero, 0 ) + 1
+            
+    if filtrados == 0: # hora de procesar toda esta vaina jsjs
+        fin = get_time()
+        return_t = {
+            "Tiempo de ejecucion (ms)": delta_time(inicio,fin),
+            "Trayectos totales": t_metodos,
+            "Trayectos filtrados": 0,
+            "Duracion promedio p/trayecto (min)": 0.0,
+            "Coste promedio (USD)": 0.0,
+            "Distancia promedio (millas)": 0.0,
+            "Coste de peaje promedio": 0.0,
+            "Propina promedio": 0.0,
+            "Pasajero mas frecuente": "N/A",
+            "Frecuencia de fecha": "N/A" 
+        }
+    elif filtrados > 0:
+        fin = get_time()
+        
+        p_frecuente = None
+        frecuencia_p = 0
+        for i in frecuencia_pa:
+            if frecuencia_pa[i] > frecuencia_p:
+                p_frecuente = i
+                frecuencia_p = frecuencia_pa[i]
+        
+        fechamas_frecuente = None
+        frecuencia_f = 0
+        for i in frecuencia_fech:
+            if frecuencia_fech[i] > frecuencia_f:
+                fechamas_frecuente = i
+                frecuencia_f = frecuencia_fech[i]
+        
+        return_t = {
+            "Tiempo de ejecucion (ms)": delta_time(inicio,fin),
+            "Trayectos totales": t_metodos,
+            "Trayectos filtrados": filtrados,
+            "Duracion promedio p/trayecto (min)": dur_prom/t_metodos,
+            "Coste promedio (USD)": c_prom/t_metodos,
+            "Distancia promedio (millas)": dis_prom/t_metodos,
+            "Coste de peaje promedio": c_peajes/t_metodos,
+            "Propina promedio": propina_prom/t_metodos,
+            "Pasajero mas frecuente": p_frecuente,
+            "Frecuencia de fecha":  fechamas_frecuente
+        }  
+    else:
+        raise Exception("Error: hay algo que no funciona en la carga de datos del req 2")
+    return return_t
 
 def req_3(catalog, pago_min, pago_max):
     
