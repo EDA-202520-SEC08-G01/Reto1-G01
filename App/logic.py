@@ -225,7 +225,7 @@ def req_1(catalog, pasajeros):
     pago_top, pago_top_conteo = None, -1
     for k, v in pagos.items():
         if v > pago_top_conteo:
-            pago_top, pago_top_cnt = k, v
+            pago_top, pago_top_conteo = k, v
 
     fecha_top, fecha_top_cnt = None, -1
     for k, v in fechas.items():
@@ -240,7 +240,7 @@ def req_1(catalog, pasajeros):
         "prom_costo_total": round(costo_total / conteo, 3),
         "prom_dist_millas": round(dist_prom / conteo, 3),
         "prom_peajes": round(tolls_prom / conteo, 3),
-        "pago_mas_usado": f"{pago_top} - {pago_top_cnt}",
+        "pago_mas_usado": f"{pago_top} - {pago_top_conteo}",
         "propina_promedio": round(tip_prom / conteo, 3),
         "fecha_mas_frecuente": fecha_top
     }
