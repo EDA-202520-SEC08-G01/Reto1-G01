@@ -37,8 +37,8 @@ def load_data(catalog, filename):
 
     for llave in archivo:
 
-        llave["pickup_datetime"] = datetime.datetime.strptime(llave["pickup_datetime"], "%Y-%m-%d %H:%M:%S")
-        llave["dropoff_datetime"] = datetime.datetime.strptime(llave["dropoff_datetime"], "%Y-%m-%d %H:%M:%S")
+        llave["pickup_datetime"] = datetime.strptime(llave["pickup_datetime"], "%Y-%m-%d %H:%M:%S")
+        llave["dropoff_datetime"] = datetime.strptime(llave["dropoff_datetime"], "%Y-%m-%d %H:%M:%S")
         llave["passenger_count"] = int(llave["passenger_count"])
         llave["trip_distance"] = float(llave["trip_distance"])
         llave["pickup_longitude"] = float(llave["pickup_longitude"])
@@ -59,13 +59,15 @@ def load_data(catalog, filename):
         
     filename2 = "Data/nyc-neighborhoods.csv"
     
-    archivo2 = csv.DictReader(open(filename2, encoding='utf-8'))
+    archivo2 = csv.DictReader(open(filename2, encoding='utf-8'), delimiter=";")
 
     for llave2 in archivo2:
-        llave2["borough"] = str(llave2["borough"])
-        llave2["neighborhood"] = str(llave2["neighborhood"])
-        llave2["latitude"] = float(llave2["latitude"])
-        llave2["longitude"] = float(llave2["longitude"])
+        llave2["borough"] = llave2["borough"]
+        llave2["neighborhood"] = llave2["neighborhood"]
+        lat_str = llave2["latitude"].replace(',', '.')
+        lon_str = llave2["longitude"].replace(',', '.')
+        llave2["latitude"] = float(lat_str)
+        llave2["longitude"] = float(lon_str)
 
         al.add_last(catalog["neighborhoods"], llave2)
 

@@ -1,5 +1,5 @@
 import sys
-import logic as l
+from App import logic as l
 
 default_limit = 1000
 sys.setrecursionlimit(default_limit*10)
@@ -35,8 +35,10 @@ def load_data(control):
     Carga los datos
     """
     #TODO: Realizar la carga de datos
-    catalog, tiempo, tamanio, mas_corto, mas_largo, primeros, ultimos = l.load_data(control)
-    return catalog, tiempo, tamanio, mas_corto, mas_largo, primeros, ultimos
+    filename = input("Ingrese el nombre del archivo: ")
+    _,tiempo,total,menor_dist,mayor_dist,primeros,ultimos = l.load_data(control, filename)
+    return _,tiempo,total,menor_dist,mayor_dist,primeros,ultimos
+
     pass
 
 
@@ -148,7 +150,14 @@ def main():
         inputs = input('Seleccione una opción para continuar\n')
         if int(inputs) == 1:
             print("Cargando información de los archivos ....\n")
-            data = load_data(control)
+            _,tiempo,total,menor_dist,mayor_dist,primeros,ultimos = load_data(control)
+            print("Tiempo de carga; " + str(tiempo)+ "ms")
+            print('Total de trayectos: ' + str(total))
+            print('Trayecto de menor distancia: ' + str(menor_dist))
+            print('Trayecto de mayor distancia: ' + str(mayor_dist))
+            print('Primeros 5: ', (primeros))
+            print('Ultimos 5: ', (ultimos))
+            
         elif int(inputs) == 2:
             print_req_1(control)
 
