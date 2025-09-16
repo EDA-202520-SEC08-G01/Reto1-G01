@@ -1,4 +1,5 @@
 from datetime import datetime
+import math
 import time
 import csv
 import os
@@ -219,7 +220,7 @@ def req_3(catalog, pago_min, pago_max):
                 pasajeros_mas_frec = None
                 frecuencia_pasajeros = 0
                 fecha_final_mas_frec = None
-                
+
     final = get_time()
     tiempo = delta_time(inicio, final)
 
@@ -237,29 +238,298 @@ def req_3(catalog, pago_min, pago_max):
 
     return retorno
 
+def haversine(lat1, lon1, lat2, lon2):
+        R = 6371.0 # radio tierra (km)
+        lat1, lon1, lat2, lon2 = map(math.radians, [lat1, lon1, lat2, lon2])
+        dlat = lat2 - lat1
+        dlon = lon2 - lon1
+        a = math.sin(dlat/2)**2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon/2)**2
+        c = 2 * math.asin(math.sqrt(a))
+        return R * c
 
-def req_4(catalog):
-    """
-    Retorna el resultado del requerimiento 4
-    """
-    # TODO: Modificar el requerimiento 4
-    pass
+def req_4(catalog, f_costo, f_inicial, f_final):
+    
+    def barrio_mas_cercano(lat, lon, lista_barrios):
+        mejor_barrio = None
+        mejor_distancia = float('inf')
+        total_barrios = al.size(lista_barrios)
 
+        for i in range(total_barrios):
+            barrio = al.get_element(lista_barrios, i)
+            distancia = haversine(lat, lon, barrio["latitude"], barrio["longitude"])
+            if distancia < mejor_distancia:
+                mejor_distancia = distancia
+                mejor_barrio = barrio["neighborhood"]
 
-def req_5(catalog):
-    """
-    Retorna el resultado del requerimiento 5
-    """
-    # TODO: Modificar el requerimiento 5
-    pass
+        return mejor_barrio
+    
+    inicio = get_time()
 
-def req_6(catalog):
-    """
-    Retorna el resultado del requerimiento 6
-    """
-    # TODO: Modificar el requerimiento 6
-    pass
+    fecha_inicial = datetime.datetime.strptime(f_inicial, "%Y-%m-%d")
+    fecha_final = datetime.datetime.strptime(f_final, "%Y-%m-%d")
 
+    totalviajes = al.size(catalog["taxis"])
+    filtrados = 0
+
+    combinaciones = {}
+
+    for i in range(totalviajes):
+        viaje = al.get_element(catalog["taxis"], i)
+        pkup_date = viaje["pickup_datetime"].date()
+
+        if f_inicial <= pkup_date <= f_final:
+            filtrados += 1
+        
+        origen = barrio_mas_cercano(viaje["pickup_latitude"], viaje["pickup_longitude"], catalog["neighborhoods"])
+        destino = barrio_mas_cercano(viaje["dropoff_latitude"], viaje["dropoff_longitude"], catalog["neighborhoods"])
+
+        if origen != destino:
+            clave = (origen, destino)
+
+            duracion = (viaje["dropoff_datetime"] - viaje["pickup_datetime"]).total_seconds() / 60
+
+            if clave not in combinaciones:
+                combinaciones[clave] = {
+                    "distancia": 0.0,
+                    "duracion": 0.0,
+                    "costo": 0.0,
+                    "conteo": 0
+                }
+            
+            combinaciones[clave]["distancia"] += viaje["trip_distance"]
+            combinaciones[clave]["duracion"] += duracion
+            combinaciones[clave]["costo"] += viaje["total_amount"]
+            combinaciones[clave]["conteo"] += 1
+
+    barrio_origen = barrio_destino = None
+    distancia_promedio = duracion_promedio = costo_promedio = 0.0
+
+    if len(combinaciones) > 0:
+        if f_costo == "MAYOR":
+            m_costo = float('-inf')
+        else:
+            m_costo = float('inf')
+        
+        for clave in combinaciones:
+            datos = combinaciones[clave]
+            conteo = datos["conteo"]
+            costo_prom = datos["costo"] / conteo
+
+        if (f_costo == "MAYOR" and costo_prom > m_costo) or (f_costo == "MENOR" and costo_prom < m_costo):
+                m_costo = costo_prom
+                barrio_origen, barrio_destino = clave
+                distancia_promedio = datos["distancia"] / conteo
+                duracion_promedio = datos["duracion"] / conteo
+                costo_promedio = costo_prom
+    
+    final = get_time()
+    tiempo = delta_time(inicio, final)
+
+    retorno = {
+        "tiempo de ejecucion (ms)": tiempo,
+        "filtro": f_costo,
+        "total de viajes filtrados": filtrados,
+        "barrio de origen": barrio_origen,
+        "barrio de destino": barrio_destino,
+        "distancia promedio (km)": distancia_promedio,
+        "duracion promedio (min)": duracion_promedio,
+        "costo promedio (USD)": costo_promedio
+    }
+
+    return retorno
+
+def req_5(catalog, f_costo, f_inicial, f_final):
+
+    inicio = get_time()
+
+    f_inicial = datetime.datetime.strptime(f_inicial, "%Y-%m-%d")
+    f_final = datetime.datetime.strptime(f_final, "%Y-%m-%d")
+    totalviajes = al.size(catalog["taxis"])
+    filtrados = 0
+
+    franjas =  {}
+
+    for i in range(totalviajes):
+        viaje = al.get_element(catalog["taxis"], i)
+        pkup_date = viaje["pickup_datetime"].date()
+
+        if f_inicial <= pkup_date <= f_final:
+            filtrados += 1
+
+            hora =  viaje["pickup_datetime"].hour()
+            if hora not in franjas:
+                franjas[hora] = {
+                    "costo_total": 0.0,
+                    "conteo": 0,
+                    "duracion total": 0.0,
+                    "total pasajeros": 0,
+                    "costo maximo": float('-inf'),
+                    "costo minimo": float('inf')
+                }
+            duracion = (viaje["dropoff_datetime"] - viaje["pickup_datetime"]).total_seconds() / 60
+            costo = viaje["total_amount"]
+            pasajeros = viaje["passenger_count"]
+
+            franjas[hora]["costo_total"] += costo
+            franjas[hora]["conteo"] += 1
+            franjas[hora]["duracion total"] += duracion
+            franjas[hora]["total pasajeros"] += pasajeros
+
+            if costo > franjas[hora]["costo maximo"]:
+                franjas[hora]["costo maximo"] = costo
+            if costo < franjas[hora]["costo minimo"]:
+                franjas[hora]["costo minimo"] = costo
+
+            mejor_hora = None
+            if f_costo == "MAYOR":
+                mejor_costo_prom = float('-inf')
+            else:
+                mejor_costo_prom = float('inf')
+
+            for hora in franjas:
+                datos = franjas[hora]
+                costo_prom = datos["costo_total"] / datos["conteo"]
+
+                if (f_costo == "MAYOR" and costo_prom > mejor_costo_prom) or (f_costo == "MENOR" and costo_prom < mejor_costo_prom):
+                    mejor_hora = hora
+                    mejor_costo_prom = costo_prom
+
+            datos = franjas[mejor_hora]
+            conteo = datos["conteo"]
+
+            final = get_time()
+            tiempo = delta_time(inicio, final)
+
+            retorno = {
+                "tiempo de ejecucion (ms)": tiempo,
+                "filtro": f_costo,
+                "total de viajes filtrados": filtrados,
+                "franja horaria": str(mejor_hora - (mejor_hora-1)),
+                "costo promedio (USD)": datos["costo_total"] / conteo,
+                "total de viajes en la franja": conteo,
+                "duracion promedio (min)": datos["duracion total"] / conteo,
+                "pasajeros promedio": datos["total pasajeros"] / conteo,
+                "costo maximo (USD)": datos["costo maximo"],
+                "costo minimo (USD)": datos["costo minimo"]
+            }
+
+            return retorno
+        
+def req_6(catalog, b_inicio, f_inicial, f_final):
+
+    def barrio_mas_cercano(lat, lon, lista_barrios):
+        mejor_barrio = None
+        mejor_distancia = float('inf')
+        barrios = al.size(lista_barrios)
+
+        for i in range(barrios):
+            barrio = al.get_element(lista_barrios, i)
+            distancia = haversine(lat, lon, barrio["latitude"], barrio["longitude"])
+            if distancia < mejor_distancia:
+                mejor_distancia = distancia
+                mejor_barrio = barrio["neighborhood"]
+
+        return mejor_barrio
+    
+    inicio = get_time()
+    fecha_inicial = datetime.datetime.strptime(f_inicial, "%Y-%m-%d")
+    fecha_final = datetime.datetime.strptime(f_final, "%Y-%m-%d")
+    totalviajes = al.size(catalog["taxis"])
+    filtrados = 0
+
+    distancia_km = 0.0
+    duracion_min = 0.0
+
+    destinos = {}
+    pagos = {}
+
+    for i in range(totalviajes):
+        viaje = al.get_element(catalog["taxis"], i)
+        pkup_date = viaje["pickup_datetime"].date()
+        if fecha_inicial <= pkup_date <= fecha_final:
+            origen = barrio_mas_cercano(viaje["pickup_latitude"], viaje["pickup_longitude"], catalog["neighborhoods"])
+            if origen == b_inicio:
+                filtrados += 1
+                dist_km += haversine(viaje["pickup_latitude"], viaje["pickup_longitude"], viaje["dropoff_latitude"], viaje["dropoff_longitude"])
+                dur_min += (viaje["dropoff_datetime"] - viaje["pickup_datetime"]).total_seconds() / 60
+
+                destino = barrio_mas_cercano(viaje["dropoff_latitude"], viaje["dropoff_longitude"], catalog["neighborhoods"])
+
+                distancia_km += dist_km
+                duracion_min += dur_min
+
+                if destino in destinos:
+                    destinos[destino] += 1
+                else:
+                    destinos[destino] = 1
+
+                metodo_pago = viaje["payment_type"]
+                if metodo_pago not in pagos:
+                    pagos[metodo_pago] = {
+                        "conteo": 0,
+                        "total_pagado": 0.0,
+                        "total duracion": 0.0
+                    }
+                pagos[metodo_pago]["conteo"] += 1
+                pagos[metodo_pago]["total_pagado"] += viaje["total_amount"]
+                pagos[metodo_pago]["total duracion"] += dur_min
+
+        if filtrados == 0:
+            fin = get_time()
+            tiempo = delta_time(inicio, fin)
+            retorno = {
+                "tiempo de ejecucion (ms)": tiempo,
+                "total de viajes filtrados": filtrados,
+                "distancia promedio (km)": 0.0,
+                "duracion promedio (min)": 0.0,
+                "barrio destino mas frecuente": None,
+                "pagos": []
+            }
+            return retorno
+        destino_mas_frec = None
+        max = float('-inf')
+        for i in destinos:
+            x = destinos[i]
+            if x > max:
+                max = x
+                destino_mas_frec = i
+        
+        metodo_pago_max = None
+        max_conteo = float('-inf')
+        metodo_recaudo_max = None
+        max_recaudo = float('-inf')
+
+        for metodo in pagos:
+            if pagos[metodo]["conteo"] > max_conteo:
+                max_conteo = pagos[metodo]["conteo"]
+                metodo_pago_max = metodo
+            if pagos[metodo]["total_pagado"] > max_recaudo:
+                max_recaudo = pagos[metodo]["total_pagado"]
+                metodo_recaudo_max = metodo
+        
+        lista_pagos = []
+        for metodo in pagos:
+            count = pagos[metodo]["conteo"]
+            lista_pagos.append({
+                "tipo": metodo,
+                "cantidad de viajes": count,
+                "precio promedio (USD)": pagos[metodo]["total_pagado"] / count,
+                "¿Es el mas usado?": metodo == metodo_pago_max,
+                "¿Es el que genera más recaudo?": metodo == metodo_recaudo_max,
+                "tiempo promedio (min)": pagos[metodo]["total duracion"] / count
+            })
+
+        fin = get_time()
+        tiempo = delta_time(inicio, fin)
+
+        retorno = {
+            "tiempo de ejecucion (ms)": tiempo,
+            "total de viajes filtrados": filtrados,
+            "distancia promedio (km)": distancia_km / filtrados,
+            "duracion promedio (min)": duracion_min / filtrados,
+            "barrio destino mas frecuente": destino_mas_frec,
+            "pagos": lista_pagos
+        }
 
 def req_7(catalog):
     """
