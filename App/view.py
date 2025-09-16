@@ -93,10 +93,10 @@ def print_req_3(control):
 
 def print_req_4(control):
     
-    f_costo = float(input("Ingrese el filtro de costo: "))
+    f_costo = input("Ingrese el filtro de costo: ")
     if f_costo != "MAYOR".lower() and f_costo != "MENOR".lower():
         print("El filtro de costo debe ser \"MAYOR\" o \"MENOR\"")
-        float(input("Ingrese nuevamente el filtro de costo: "))
+        f_costo = input("Ingrese nuevamente el filtro de costo: ")
 
     f_inicial = input("Ingrese la fecha inicial (AAAA-MM-DD): ")
     f_final = input("Ingrese la fecha final (AAAA-MM-DD): ")
@@ -104,10 +104,10 @@ def print_req_4(control):
 
 def print_req_5(control):
     
-    f_costo = float(input("Ingrese el filtro de costo: "))
+    f_costo = input("Ingrese el filtro de costo: ")
     if f_costo != "MAYOR".lower() and f_costo != "MENOR".lower():
         print("El filtro de costo debe ser \"MAYOR\" o \"MENOR\"")
-        float(input("Ingrese nuevamente el filtro de costo: "))
+        f_costo = input("Ingrese nuevamente el filtro de costo: ")
 
     f_inicial = input("Ingrese la fecha inicial (AAAA-MM-DD): ")
     f_final = input("Ingrese la fecha final (AAAA-MM-DD): ")
