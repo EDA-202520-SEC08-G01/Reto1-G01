@@ -445,8 +445,8 @@ def req_4(catalog, f_costo, f_inicial, f_final):
     
     inicio = get_time()
 
-    fecha_inicial = datetime.strptime(f_inicial, "%Y-%m-%d")
-    fecha_final = datetime.strptime(f_final, "%Y-%m-%d")
+    fecha_inicial = datetime.strptime(f_inicial, "%Y-%m-%d").date()
+    fecha_final = datetime.strptime(f_final, "%Y-%m-%d").date()
 
     totalviajes = al.size(catalog["taxis"])
     filtrados = 0
@@ -457,7 +457,7 @@ def req_4(catalog, f_costo, f_inicial, f_final):
         viaje = al.get_element(catalog["taxis"], i)
         pkup_date = viaje["pickup_datetime"].date()
 
-        if f_inicial <= pkup_date <= f_final:
+        if fecha_inicial <= pkup_date <= fecha_final:
             filtrados += 1
         
         origen = barrio_mas_cercano(viaje["pickup_latitude"], viaje["pickup_longitude"], catalog["neighborhoods"])
