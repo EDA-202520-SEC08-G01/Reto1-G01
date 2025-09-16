@@ -1,14 +1,13 @@
 import sys
+import logic as l
 
 default_limit = 1000
 sys.setrecursionlimit(default_limit*10)
 
 def new_logic():
-    """
-        Se crea una instancia del controlador
-    """
-    #TODO: Llamar la función de la lógica donde se crean las estructuras de datos
-    pass
+    
+    catalog = l.new_catalog()
+    print(catalog)
 
 def print_menu():
     print("Bienvenido")
@@ -24,19 +23,14 @@ def print_menu():
     print("0- Salir")
 
 def load_data(control):
-    """
-    Carga los datos
-    """
-    #TODO: Realizar la carga de datos
-    pass
 
+    filename = input("Ingrese el nombre del archivo: ")
+    print(l.load_data(control, filename))
 
-def print_data(control, id):
-    """
-        Función que imprime un dato dado su ID
-    """
-    #TODO: Realizar la función para imprimir un elemento
-    pass
+def print_data(control):
+    
+    id = input("Ingrese el indice del dato a consultar: ")
+    print(l.get_data(control, id))
 
 def print_req_1(control):
     """
@@ -55,36 +49,39 @@ def print_req_2(control):
 
 
 def print_req_3(control):
-    """
-        Función que imprime la solución del Requerimiento 3 en consola
-    """
-    # TODO: Imprimir el resultado del requerimiento 3
-    pass
-
+    pago_min = float(input("Ingrese el pago mínimo: "))
+    pago_max = float(input("Ingrese el pago máximo: "))
+    print(l.req_3(control, pago_min, pago_max))
 
 def print_req_4(control):
-    """
-        Función que imprime la solución del Requerimiento 4 en consola
-    """
-    # TODO: Imprimir el resultado del requerimiento 4
-    pass
+    
+    f_costo = float(input("Ingrese el filtro de costo: "))
+    if f_costo != "MAYOR".lower() and f_costo != "MENOR".lower():
+        print("El filtro de costo debe ser \"MAYOR\" o \"MENOR\"")
+        float(input("Ingrese nuevamente el filtro de costo: "))
 
+    f_inicial = input("Ingrese la fecha inicial (AAAA-MM-DD): ")
+    f_final = input("Ingrese la fecha final (AAAA-MM-DD): ")
+    print(l.req_4(control, f_costo, f_inicial, f_final))
 
 def print_req_5(control):
-    """
-        Función que imprime la solución del Requerimiento 5 en consola
-    """
-    # TODO: Imprimir el resultado del requerimiento 5
-    pass
+    
+    f_costo = float(input("Ingrese el filtro de costo: "))
+    if f_costo != "MAYOR".lower() and f_costo != "MENOR".lower():
+        print("El filtro de costo debe ser \"MAYOR\" o \"MENOR\"")
+        float(input("Ingrese nuevamente el filtro de costo: "))
+
+    f_inicial = input("Ingrese la fecha inicial (AAAA-MM-DD): ")
+    f_final = input("Ingrese la fecha final (AAAA-MM-DD): ")
+    print(l.req_5(control, f_costo, f_inicial, f_final))
 
 
 def print_req_6(control):
-    """
-        Función que imprime la solución del Requerimiento 6 en consola
-    """
-    # TODO: Imprimir el resultado del requerimiento 6
-    pass
-
+     
+    b_inicio = input("Ingrese el barrio de inicio: ")
+    f_inicial = input("Ingrese la fecha inicial (AAAA-MM-DD): ")
+    f_final = input("Ingrese la fecha final (AAAA-MM-DD): ")
+    print(l.req_6(control, b_inicio, f_inicial, f_final))
 
 def print_req_7(control):
     """
