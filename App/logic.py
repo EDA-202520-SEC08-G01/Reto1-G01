@@ -28,13 +28,6 @@ def new_logic():
         "neighborhoods" : al.new_list(),
     }
     return catalog
-    catalog = {
-        "taxis" : al.new_list(),
-        "neighborhoods" : al.new_list(),
-    }
-    return catalog
-    pass
-
 
 # Funciones para la carga de datos
 
@@ -256,7 +249,7 @@ def req_1(catalog, pasajeros):
 
 
 def req_2(catalog, m_pago):
-    
+
     inicio = get_time()
     
     t_metodos = al.size(catalog["taxis"])
