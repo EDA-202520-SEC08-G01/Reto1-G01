@@ -445,8 +445,8 @@ def req_4(catalog, f_costo, f_inicial, f_final):
     
     inicio = get_time()
 
-    fecha_inicial = datetime.datetime.strptime(f_inicial, "%Y-%m-%d")
-    fecha_final = datetime.datetime.strptime(f_final, "%Y-%m-%d")
+    fecha_inicial = datetime.strptime(f_inicial, "%Y-%m-%d")
+    fecha_final = datetime.strptime(f_final, "%Y-%m-%d")
 
     totalviajes = al.size(catalog["taxis"])
     filtrados = 0
