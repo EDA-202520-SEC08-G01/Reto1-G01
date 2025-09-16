@@ -271,7 +271,7 @@ def req_2(catalog, m_pago):
             
     if filtrados == 0: # hora de procesar toda esta vaina jsjs
         fin = get_time()
-        return {
+        return_t = {
             "Tiempo de ejecucion (ms)": delta_time(inicio,fin),
             "Trayectos totales": t_metodos,
             "Trayectos filtrados": 0,
@@ -300,7 +300,7 @@ def req_2(catalog, m_pago):
                 fechamas_frecuente = i
                 frecuencia_f = frecuencia_fech[i]
         
-        return {
+        return_t = {
             "Tiempo de ejecucion (ms)": delta_time(inicio,fin),
             "Trayectos totales": t_metodos,
             "Trayectos filtrados": filtrados,
@@ -314,7 +314,7 @@ def req_2(catalog, m_pago):
         }  
     else:
         raise Exception("Error: hay algo que no funciona en la carga de datos del req 2")
-            
+    return return_t
 
 def req_3(catalog, pago_min, pago_max):
     
