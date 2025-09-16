@@ -86,8 +86,6 @@ def print_req_2(control):
     
     # TODO: Imprimir el resultado del requerimiento 2
 
-
-
 def print_req_3(control):
     pago_min = float(input("Ingrese el pago mínimo: "))
     pago_max = float(input("Ingrese el pago máximo: "))

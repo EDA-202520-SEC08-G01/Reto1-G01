@@ -160,7 +160,6 @@ def get_data(catalog, id):
 
 
 def req_1(catalog, pasajeros):
-def req_1(catalog, pasajeros):
     """
     Retorna el resultado del requerimiento 1
     """
@@ -256,12 +255,7 @@ def req_1(catalog, pasajeros):
     pass
 
 
-def req_2(catalog):
-    """
-    Retorna el resultado del requerimiento 2
-    """
-    
-    # TODO: Modificar el requerimiento 2
+def req_2(catalog, m_pago):
     
     inicio = get_time()
     
