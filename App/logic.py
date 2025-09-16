@@ -143,12 +143,99 @@ def req_2(catalog):
     pass
 
 
-def req_3(catalog):
-    """
-    Retorna el resultado del requerimiento 3
-    """
-    # TODO: Modificar el requerimiento 3
-    pass
+def req_3(catalog, pago_min, pago_max):
+    
+    inicio = get_time()
+
+    totalviajes = al.size(catalog["taxis"])
+    filtrados = 0
+    suma_duracion_min = 0
+    suma_total = 0
+    suma_distancia = 0
+    suma_peajes = 0
+    suma_propinas = 0
+
+    frec_pasajeros = {}
+    frec_fechas = {}
+
+    for i in range(totalviajes):
+
+        viaje = al.get_element(catalog["taxis"], i)
+        costo = viaje["total_amount"]
+
+        if costo is not None and pago_min <= costo <= pago_max:
+            filtrados += 1
+
+            duracion_min = (viaje["dropoff_datetime"] - viaje["pickup_datetime"]).total_seconds() / 60
+            suma_duracion_min += duracion_min
+
+            suma_total += costo
+            suma_distancia += viaje["trip_distance"]
+            suma_peajes += viaje["tolls_amount"]
+            suma_propinas += viaje["tip_amount"]
+            pasajeros = viaje["passenger_count"]
+
+            if pasajeros in frec_pasajeros:
+                frec_pasajeros[pasajeros] += 1
+            else:
+                frec_pasajeros[pasajeros] = 1
+
+            fecha_final = viaje["dropoff_datetime"].strftime("%Y-%m-%d")
+            if fecha_final in frec_fechas:
+                frec_fechas[fecha_final] += 1
+            else:
+                frec_fechas[fecha_final] = 1
+
+            if filtrados > 0:
+                promedio_duracion = suma_duracion_min / filtrados
+                promedio_costo = suma_total / filtrados
+                promedio_distancia = suma_distancia / filtrados
+                promedio_peajes = suma_peajes / filtrados
+                promedio_propinas = suma_propinas / filtrados
+
+                pasajeros_mas_frec = None
+                frecuencia_pasajeros = 0
+                for clave in frec_pasajeros:
+                    curr_frec = frec_pasajeros[clave]
+                    if curr_frec > frecuencia_pasajeros:
+                        frecuencia_pasajeros = curr_frec
+                        pasajeros_mas_frec = clave
+
+                fecha_final_mas_frec = None
+                frecuencia_fecha_mayor = 0
+                for fecha in frec_fechas:
+                    curr_frec_fecha = frec_fechas[fecha]
+                    if curr_frec_fecha > frecuencia_fecha_mayor:
+                        frecuencia_fecha_mayor = curr_frec_fecha
+                        fecha_final_mas_frec = fecha
+
+
+            else:
+                promedio_duracion = 0.0
+                promedio_costo = 0.0
+                promedio_distancia = 0.0
+                promedio_peajes = 0.0
+                promedio_propinas = 0.0
+                pasajeros_mas_frec = None
+                frecuencia_pasajeros = 0
+                fecha_final_mas_frec = None
+                
+    final = get_time()
+    tiempo = delta_time(inicio, final)
+
+    retorno = {
+        "tiempo de ejecucion (ms)": tiempo,
+        "total de viajes válidos": filtrados,
+        "promedio duración (min)": promedio_duracion,
+        "promedio costo (USD)": promedio_costo,
+        "promedio distancia (millas)": promedio_distancia,
+        "promedio pago peajes": promedio_peajes,
+        "num pasajeros mas frecuente": pasajeros_mas_frec,
+        "promedio propinas": promedio_propinas,
+        "fecha final mas frecuente": fecha_final_mas_frec
+    }
+
+    return retorno
 
 
 def req_4(catalog):
