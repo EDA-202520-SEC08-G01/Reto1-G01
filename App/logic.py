@@ -265,8 +265,8 @@ def req_4(catalog, f_costo, f_inicial, f_final):
     
     inicio = get_time()
 
-    fecha_inicial = datetime.datetime.strptime(f_inicial, "%Y-%m-%d")
-    fecha_final = datetime.datetime.strptime(f_final, "%Y-%m-%d")
+    fecha_inicial = datetime.datetime.strptime(f_inicial, "%Y-%m-%d").date()
+    fecha_final = datetime.datetime.strptime(f_final, "%Y-%m-%d").date()
 
     totalviajes = al.size(catalog["taxis"])
     filtrados = 0
@@ -277,7 +277,7 @@ def req_4(catalog, f_costo, f_inicial, f_final):
         viaje = al.get_element(catalog["taxis"], i)
         pkup_date = viaje["pickup_datetime"].date()
 
-        if f_inicial <= pkup_date <= f_final:
+        if fecha_inicial <= pkup_date <= fecha_final:
             filtrados += 1
         
         origen = barrio_mas_cercano(viaje["pickup_latitude"], viaje["pickup_longitude"], catalog["neighborhoods"])
@@ -295,8 +295,10 @@ def req_4(catalog, f_costo, f_inicial, f_final):
                     "costo": 0.0,
                     "conteo": 0
                 }
-            
-            combinaciones[clave]["distancia"] += viaje["trip_distance"]
+
+            distancia = haversine(viaje["pickup_latitude"], viaje["pickup_longitude"], viaje["dropoff_latitude"], viaje["dropoff_longitude"])
+
+            combinaciones[clave]["distancia"] += distancia
             combinaciones[clave]["duracion"] += duracion
             combinaciones[clave]["costo"] += viaje["total_amount"]
             combinaciones[clave]["conteo"] += 1
@@ -305,17 +307,18 @@ def req_4(catalog, f_costo, f_inicial, f_final):
     distancia_promedio = duracion_promedio = costo_promedio = 0.0
 
     if len(combinaciones) > 0:
-        if f_costo == "MAYOR":
-            m_costo = float('-inf')
-        else:
-            m_costo = float('inf')
+            if f_costo == "MAYOR":
+                m_costo = float('-inf')
+            else:
+                m_costo = float('inf')
         
-        for clave in combinaciones:
+    for clave in combinaciones:
             datos = combinaciones[clave]
             conteo = datos["conteo"]
-            costo_prom = datos["costo"] / conteo
+            if conteo > 0:
+                costo_prom = datos["costo"] / conteo
 
-        if (f_costo == "MAYOR" and costo_prom > m_costo) or (f_costo == "MENOR" and costo_prom < m_costo):
+    if (f_costo == "MAYOR" and costo_prom > m_costo) or (f_costo == "MENOR" and costo_prom < m_costo):
                 m_costo = costo_prom
                 barrio_origen, barrio_destino = clave
                 distancia_promedio = datos["distancia"] / conteo
