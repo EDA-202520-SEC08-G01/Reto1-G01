@@ -116,7 +116,7 @@ def print_req_3(control):
 def print_req_4(control):
     
     f_costo = input("Ingrese el filtro de costo: ")
-    if f_costo != "MAYOR".lower() and f_costo != "MENOR".lower():
+    if f_costo != "MAYOR" and f_costo != "MENOR":
         print("El filtro de costo debe ser \"MAYOR\" o \"MENOR\"")
         f_costo = input("Ingrese nuevamente el filtro de costo: ")
 
