@@ -80,11 +80,22 @@ def print_req_2(control):
     """
         Función que imprime la solución del Requerimiento 2 en consola
     """
-    
-    m_pago = str(input("Ingrese el metodo de pago a filtrar: "))
-    print(l.req_2(control, m_pago))
-    
     # TODO: Imprimir el resultado del requerimiento 2
+    m_pago = str(input("Ingrese el metodo de pago a filtrar: "))
+    res =l.req_2(control, m_pago)
+    print("\n--- Resultado Requerimiento 2 ---")
+    print(f"Tiempo de ejecución (ms): {res['Tiempo de ejecucion (ms)']}")
+    print(f"Número total de trayectos: {res['trayectos_totales']}")
+    print(f"Trayectos filtrados: {res['Trayectos filtrados']}")
+    print(f"Duracion promedio por trayecto (min): {res['Duracion promedio p/trayecto (min)']}")
+    print(f"Costo promedio(USD): {res['Coste promedio (USD)']}")
+    print(f"Distancia promedio (millas): {res['Distancia promedio (millas)']}")
+    print(f"Costo promedio de peajes (USD): {res['Coste de peaje promedio']}")
+    print(f"Propina promedio (USD): {res['propina_promedio']}")
+    print(f"Pasajero mas frecuente: {res["Pasajero mas frecuente"]}")
+    print(f"Fecha de inicio más frecuente: {res['Frecuencia de fecha']}")
+    print("---------------------------------\n")
+    
 
 def print_req_3(control):
     pago_min = float(input("Ingrese el pago mínimo: "))
