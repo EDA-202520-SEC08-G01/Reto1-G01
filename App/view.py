@@ -85,7 +85,7 @@ def print_req_2(control):
     res =l.req_2(control, m_pago)
     print("\n--- Resultado Requerimiento 2 ---")
     print(f"Tiempo de ejecución (ms): {res['Tiempo de ejecucion (ms)']}")
-    print(f"Número total de trayectos: {res['trayectos totales']}")
+    print(f"Número total de trayectos: {res['Trayectos totales']}")
     print(f"Trayectos filtrados: {res['Trayectos filtrados']}")
     print(f"Duracion promedio por trayecto (min): {res['Duracion promedio p/trayecto (min)']}")
     print(f"Costo promedio(USD): {res['Coste promedio (USD)']}")
