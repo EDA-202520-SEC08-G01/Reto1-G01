@@ -308,7 +308,7 @@ def req_2(catalog, m_pago):
             "Distancia promedio (millas)": dis_prom/t_metodos,
             "Coste de peaje promedio": c_peajes/t_metodos,
             "Propina promedio": propina_prom/t_metodos,
-            "Pasajero mas frecuente": p_frecuente,
+            "Pasajero mas frecuente": f"{p_frecuente} - {frecuencia_p}",
             "Frecuencia de fecha":  fechamas_frecuente
         }  
     else:
