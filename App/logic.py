@@ -633,6 +633,8 @@ def req_6(catalog, b_inicio, f_inicial, f_final):
 
     distancia_km = 0.0
     duracion_min = 0.0
+    dist_km = 0
+    dur_min = 0
 
     destinos = {}
     pagos = {}
