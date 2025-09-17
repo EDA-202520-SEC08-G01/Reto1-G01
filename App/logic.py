@@ -565,7 +565,7 @@ def req_5(catalog, f_costo, f_inicial, f_final):
                     "costo minimo": float('inf')
                 }
             duracion = (viaje["dropoff_datetime"] - viaje["pickup_datetime"]).total_seconds() / 60
-            costo = viaje["total_amount"]
+            costo = float(viaje["total_amount"])
             pasajeros = viaje["passenger_count"]
 
             franjas[hora]["costo_total"] += costo
