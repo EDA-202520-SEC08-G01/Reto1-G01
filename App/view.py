@@ -138,13 +138,25 @@ def print_req_4(control):
 def print_req_5(control):
     
     f_costo = input("Ingrese el filtro de costo: ")
-    if f_costo != "MAYOR".lower() and f_costo != "MENOR".lower():
+    if f_costo != "MAYOR" and f_costo != "MENOR":
         print("El filtro de costo debe ser \"MAYOR\" o \"MENOR\"")
         f_costo = input("Ingrese nuevamente el filtro de costo: ")
 
     f_inicial = input("Ingrese la fecha inicial (AAAA-MM-DD): ")
     f_final = input("Ingrese la fecha final (AAAA-MM-DD): ")
-    print(l.req_5(control, f_costo, f_inicial, f_final))
+    res = l.req_5(control, f_costo, f_inicial, f_final)
+    print("\n--- Resultado Requerimiento 5 ---")
+    print(f"Tiempo de ejecución (ms): {res['tiempo de ejecucion (ms)']}")
+    print(f"Filtro seleccionado del costo: {res['filtro']}")
+    print(f"Trayectos que cumplen el filtro: {res['total de viajes filtrados']}")
+    print(f"Franja Horaria: {res["franja horaria"]}")
+    print(f"Costo total promedio(USD): {res['costo promedio (USD)']}")
+    print(f"Total de viajes en la franja: {res["total de viajes en la franja"]}")
+    print(f"Duracion promedio de los trayectos: {res["duracion promedio (min)"]}")
+    print(f"# de pasajeros promedio: {res['pasajeros promedio']}")   
+    print(f"Costo maximo (USD): {res['costo maximo (USD)']}") 
+    print(f"Costo minimo (USD): {res['costo minimo (USD)']}") 
+    print("---------------------------------\n")
 
 
 def print_req_6(control):
@@ -152,7 +164,23 @@ def print_req_6(control):
     b_inicio = input("Ingrese el barrio de inicio: ")
     f_inicial = input("Ingrese la fecha inicial (AAAA-MM-DD): ")
     f_final = input("Ingrese la fecha final (AAAA-MM-DD): ")
-    print(l.req_6(control, b_inicio, f_inicial, f_final))
+    res = l.req_6(control, b_inicio, f_inicial, f_final)
+    print("\n--- Resultado Requerimiento 6 ---")
+    print(f"Tiempo de ejecución (ms): {res['tiempo de ejecucion (ms)']}")
+    print(f"Trayectos que cumplen el filtro: {res['total de viajes filtrados']}")
+    print(f"Distancia promedio de los trayectos: {res["distancia promedio (km)"]}")
+    print(f"Duracion promedio de los trayectos: {res["duracion promedio (min)"]}")
+    print(f"Barrio mas frecuentado: {res['barrio destino mas frecuente']}")   
+    print("\nMedios de pago:")
+    for pago in res["pagos"]:
+        print("Tipo:", pago["tipo"])
+        print("  Cantidad de viajes:", pago["cantidad de viajes"])
+        print("  Precio promedio (USD):", round(pago["precio promedio (USD)"], 2))
+        print("  ¿Es el más usado?:", "Sí" if pago["¿Es el mas usado?"] else "No")
+        print("  ¿Es el que genera más recaudo?:", "Sí" if pago["¿Es el que genera más recaudo?"] else "No")
+        print("  Tiempo promedio (min):", round(pago["tiempo promedio (min)"], 2))
+        print()
+    print("---------------------------------\n")
 
 def print_req_7(control):
     """

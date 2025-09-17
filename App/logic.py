@@ -321,14 +321,14 @@ def req_2(catalog, m_pago):
                 frecuencia_f = frecuencia_fech[i]
         
         return_t = {
-            "Tiempo de ejecucion (ms)": delta_time(inicio,fin),
+            "Tiempo de ejecucion (ms)": round(delta_time(inicio,fin),3),
             "Trayectos totales": t_metodos,
             "Trayectos filtrados": filtrados,
-            "Duracion promedio p/trayecto (min)": dur_prom/t_metodos,
-            "Coste promedio (USD)": c_prom/t_metodos,
-            "Distancia promedio (millas)": dis_prom/t_metodos,
-            "Coste de peaje promedio": c_peajes/t_metodos,
-            "Propina promedio": propina_prom/t_metodos,
+            "Duracion promedio p/trayecto (min)": round((dur_prom/t_metodos),3),
+            "Coste promedio (USD)": round(c_prom/t_metodos,3),
+            "Distancia promedio (millas)": round(dis_prom/t_metodos,3),
+            "Coste de peaje promedio": round(c_peajes/t_metodos,3),
+            "Propina promedio": round(propina_prom/t_metodos,3),
             "Pasajero mas frecuente": f"{p_frecuente} - {frecuencia_p}",
             "Frecuencia de fecha":  fechamas_frecuente
         }  
@@ -380,11 +380,11 @@ def req_3(catalog, pago_min, pago_max):
                 frec_fechas[fecha_final] = 1
 
             if filtrados > 0:
-                promedio_duracion = suma_duracion_min / filtrados
-                promedio_costo = suma_total / filtrados
-                promedio_distancia = suma_distancia / filtrados
-                promedio_peajes = suma_peajes / filtrados
-                promedio_propinas = suma_propinas / filtrados
+                promedio_duracion = round(suma_duracion_min / filtrados,3)
+                promedio_costo = round(suma_total / filtrados,3)
+                promedio_distancia = round(suma_distancia / filtrados,3)
+                promedio_peajes = round(suma_peajes / filtrados,3)
+                promedio_propinas = round(suma_propinas / filtrados,3)
 
                 pasajeros_mas_frec = None
                 frecuencia_pasajeros = 0
@@ -417,7 +417,7 @@ def req_3(catalog, pago_min, pago_max):
     tiempo = delta_time(inicio, final)
 
     retorno = {
-        "tiempo de ejecucion (ms)": tiempo,
+        "tiempo de ejecucion (ms)": round(tiempo,3),
         "total de viajes válidos": filtrados,
         "promedio duración (min)": promedio_duracion,
         "promedio costo (USD)": promedio_costo,
@@ -516,15 +516,15 @@ def req_4(catalog, f_costo, f_inicial, f_final):
                     if (f_costo == "MAYOR" and costo_prom > m_costo) or (f_costo == "MENOR" and costo_prom < m_costo):
                         m_costo = costo_prom
                         barrio_origen, barrio_destino = clave
-                        distancia_promedio = datos["distancia"] / conteo
-                        duracion_promedio = datos["duracion"] / conteo
-                        costo_promedio = costo_prom
+                        distancia_promedio = round(datos["distancia"] / conteo,3)
+                        duracion_promedio = round(datos["duracion"] / conteo,3)
+                        costo_promedio = round(costo_prom,3)
     
     final = get_time()
     tiempo = delta_time(inicio, final)
 
     retorno = {
-        "tiempo de ejecucion (ms)": tiempo,
+        "tiempo de ejecucion (ms)": round(tiempo,3),
         "filtro": f_costo,
         "total de viajes filtrados": filtrados,
         "barrio de origen": barrio_origen,
@@ -616,14 +616,14 @@ def req_5(catalog, f_costo, f_inicial, f_final):
     conteo = datos["conteo"]
 
     retorno = {
-                "tiempo de ejecucion (ms)": tiempo,
+                "tiempo de ejecucion (ms)": round(tiempo,3),
                 "filtro": f_costo,
                 "total de viajes filtrados": filtrados,
                 "franja horaria": f"{mejor_hora} - {mejor_hora + 1}" if mejor_hora < 23 else f"{mejor_hora} - 0",
-                "costo promedio (USD)": datos["costo_total"] / conteo,
+                "costo promedio (USD)": round(datos["costo_total"] / conteo,3),
                 "total de viajes en la franja": conteo,
-                "duracion promedio (min)": datos["duracion total"] / conteo,
-                "pasajeros promedio": datos["total pasajeros"] / conteo,
+                "duracion promedio (min)": round(datos["duracion total"] / conteo,3),
+                "pasajeros promedio": round(datos["total pasajeros"] / conteo,3),
                 "costo maximo (USD)": datos["costo maximo"],
                 "costo minimo (USD)": datos["costo minimo"]
             }
@@ -740,10 +740,10 @@ def req_6(catalog, b_inicio, f_inicial, f_final):
     tiempo = delta_time(inicio, fin)
 
     retorno = {
-            "tiempo de ejecucion (ms)": tiempo,
+            "tiempo de ejecucion (ms)": round(tiempo,3),
             "total de viajes filtrados": filtrados,
-            "distancia promedio (km)": distancia_km / filtrados,
-            "duracion promedio (min)": duracion_min / filtrados,
+            "distancia promedio (km)": round(distancia_km / filtrados,3),
+            "duracion promedio (min)": round(duracion_min / filtrados,3),
             "barrio destino mas frecuente": destino_mas_frec,
             "pagos": lista_pagos
         }
