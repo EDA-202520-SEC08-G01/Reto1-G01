@@ -87,11 +87,19 @@ def load_data(catalog, filename):
             min = elem
         elif elem["trip_distance"] > max["trip_distance"]:
             max = elem
-
-    mas_corto = (min["pickup_datetime"], min["trip_distance"], min["total_amount"])
-
-    mas_largo = (max["pickup_datetime"], max["trip_distance"], max["total_amount"])
     
+    fmt = "%Y-%m-%d %H:%M:%S"
+    mas_corto = {
+        "inicio": min["pickup_datetime"].strftime(fmt),
+        "distancia_millas": round(min["trip_distance"], 2),
+        "costo_total": round(min["total_amount"], 2)
+    }
+
+    mas_largo = {
+        "inicio": max["pickup_datetime"].strftime(fmt),
+        "distancia_millas": round(max["trip_distance"], 2),
+        "costo_total": round(max["total_amount"], 2)
+    }
     primeros = []
     
     ultimos = []
@@ -103,7 +111,13 @@ def load_data(catalog, filename):
         resta = element["dropoff_datetime"] - element["pickup_datetime"]
         minutos = resta.total_seconds()/60
 
-        info = [element["pickup_datetime"], element["dropoff_datetime"], minutos, element["trip_distance"], element["total_amount"]]
+        info = {
+            "inicio": element["pickup_datetime"].strftime(fmt),
+            "fin": element["dropoff_datetime"].strftime(fmt),
+            "duracion_min": minutos,
+            "distancia_millas": round(element["trip_distance"], 2),
+            "costo_total": round(element["total_amount"], 2)
+        }
         primeros.append(info)
 
     for i in range(tamanio-5, tamanio):
@@ -112,7 +126,14 @@ def load_data(catalog, filename):
         resta = elemento["dropoff_datetime"] - elemento["pickup_datetime"]
         minutos = resta.total_seconds()/60
         
-        info = [elemento["pickup_datetime"], elemento["dropoff_datetime"], minutos, elemento["trip_distance"], elemento["total_amount"]]
+        info = {
+            "inicio": elemento["pickup_datetime"].strftime(fmt),
+            "fin": elemento["dropoff_datetime"].strftime(fmt),
+            "duracion_min": minutos,
+            "distancia_millas": round(elemento["trip_distance"], 2),
+            "costo_total": round(elemento["total_amount"], 2)
+        }
+
         ultimos.append(info)
 
     
