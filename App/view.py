@@ -1,6 +1,7 @@
 import sys
 from App import logic as l
 
+
 default_limit = 1000
 sys.setrecursionlimit(default_limit*10)
 
@@ -185,12 +186,32 @@ def main():
         if int(inputs) == 1:
             print("Cargando información de los archivos ....\n")
             _,tiempo,total,menor_dist,mayor_dist,primeros,ultimos = load_data(control)
-            print("Tiempo de carga; " + str(tiempo)+ "ms")
+            print("Tiempo de carga (ms): " + str(tiempo))
             print('Total de trayectos: ' + str(total))
-            print('Trayecto de menor distancia: ' + str(menor_dist))
-            print('Trayecto de mayor distancia: ' + str(mayor_dist))
-            print('Primeros 5: ', (primeros))
-            print('Ultimos 5: ', (ultimos))
+            print("\nTrayecto de menor distancia (distancia > 0.0 millas):")
+            print(f"  - Fecha/Hora de inicio: {menor_dist['inicio']}")
+            print(f"  - Distancia (millas): {menor_dist['distancia_millas']}")
+            print(f"  - Costo total (USD): {menor_dist['costo_total']}")
+            print("\nTrayecto de mayor distancia:")
+            print(f"  - Fecha/Hora de inicio: {mayor_dist['inicio']}")
+            print(f"  - Distancia (millas): {mayor_dist['distancia_millas']}")
+            print(f"  - Costo total (USD): {mayor_dist['costo_total']}")
+            print("\nPrimeros cinco trayectos cargados:")
+            for idx, t in enumerate(primeros, start=1):
+                print(f"  #{idx}")
+                print(f"    • Inicio: {t['inicio']}")
+                print(f"    • Fin: {t['fin']}")
+                print(f"    • Duración (min): {t['duracion_min']}")
+                print(f"    • Distancia (millas): {t['distancia_millas']}")
+                print(f"    • Costo total (USD): {t['costo_total']}")
+            print("\nÚltimos cinco trayectos cargados:")
+            for idx, t in enumerate(ultimos, start=1):
+                print(f"  #{idx}")
+                print(f"    • Inicio: {t['inicio']}")
+                print(f"    • Fin: {t['fin']}")
+                print(f"    • Duración (min): {t['duracion_min']}")
+                print(f"    • Distancia (millas): {t['distancia_millas']}")
+                print(f"    • Costo total (USD): {t['costo_total']}")
             
         elif int(inputs) == 2:
             print_req_1(control)
