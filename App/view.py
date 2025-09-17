@@ -92,15 +92,26 @@ def print_req_2(control):
     print(f"Distancia promedio (millas): {res['Distancia promedio (millas)']}")
     print(f"Costo promedio de peajes (USD): {res['Coste de peaje promedio']}")
     print(f"Propina promedio (USD): {res['Propina promedio']}")
-    print(f"Pasajero mas frecuente: {res["Pasajero mas frecuente"]}")
-    print(f"Fecha de inicio más frecuente: {res['Frecuencia de fecha']}")
+    print(f"# de pasajeros mas frecuente: {res["Pasajero mas frecuente"]}")
+    print(f"Fecha de finalizacion más frecuente: {res['Frecuencia de fecha']}")
     print("---------------------------------\n")
     
 
 def print_req_3(control):
     pago_min = float(input("Ingrese el pago mínimo: "))
     pago_max = float(input("Ingrese el pago máximo: "))
-    print(l.req_3(control, pago_min, pago_max))
+    res = l.req_3(control, pago_min, pago_max)
+    print("\n--- Resultado Requerimiento 2 ---")
+    print(f"Tiempo de ejecución (ms): {res['tiempo de ejecucion (ms)']}")
+    print(f"Trayectos que cumplen el rango: {res['total de viajes válidos']}")
+    print(f"Duracion promedio por trayecto (min): {res['promedio duración (min)']}")
+    print(f"Costo promedio(USD): {res['promedio costo (USD)']}")
+    print(f"Distancia promedio (millas): {res['promedio distancia (millas)']}")
+    print(f"Costo promedio de peajes (USD): {res['promedio pago peajes']}")
+    print(f"# de pasajeros mas frecuente: {res["num pasajeros mas frecuente"]}")
+    print(f"Propina promedio (USD): {res['promedio propinas']}")
+    print(f"Fecha de finalizacion más frecuente: {res['fecha final mas frecuente']}")
+    print("---------------------------------\n")
 
 def print_req_4(control):
     

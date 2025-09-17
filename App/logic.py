@@ -402,7 +402,7 @@ def req_3(catalog, pago_min, pago_max):
         "promedio costo (USD)": promedio_costo,
         "promedio distancia (millas)": promedio_distancia,
         "promedio pago peajes": promedio_peajes,
-        "num pasajeros mas frecuente": pasajeros_mas_frec,
+        "num pasajeros mas frecuente": f"{pasajeros_mas_frec}-{frecuencia_pasajeros}",
         "promedio propinas": promedio_propinas,
         "fecha final mas frecuente": fecha_final_mas_frec
     }
