@@ -91,7 +91,7 @@ def print_req_2(control):
     print(f"Costo promedio(USD): {res['Coste promedio (USD)']}")
     print(f"Distancia promedio (millas): {res['Distancia promedio (millas)']}")
     print(f"Costo promedio de peajes (USD): {res['Coste de peaje promedio']}")
-    print(f"Propina promedio (USD): {res['propina_promedio']}")
+    print(f"Propina promedio (USD): {res['Propina promedio']}")
     print(f"Pasajero mas frecuente: {res["Pasajero mas frecuente"]}")
     print(f"Fecha de inicio más frecuente: {res['Frecuencia de fecha']}")
     print("---------------------------------\n")
