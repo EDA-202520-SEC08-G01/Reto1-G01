@@ -101,7 +101,7 @@ def print_req_3(control):
     pago_min = float(input("Ingrese el pago mínimo: "))
     pago_max = float(input("Ingrese el pago máximo: "))
     res = l.req_3(control, pago_min, pago_max)
-    print("\n--- Resultado Requerimiento 2 ---")
+    print("\n--- Resultado Requerimiento 3 ---")
     print(f"Tiempo de ejecución (ms): {res['tiempo de ejecucion (ms)']}")
     print(f"Trayectos que cumplen el rango: {res['total de viajes válidos']}")
     print(f"Duracion promedio por trayecto (min): {res['promedio duración (min)']}")
@@ -122,7 +122,17 @@ def print_req_4(control):
 
     f_inicial = input("Ingrese la fecha inicial (AAAA-MM-DD): ")
     f_final = input("Ingrese la fecha final (AAAA-MM-DD): ")
-    print(l.req_4(control, f_costo, f_inicial, f_final))
+    res =l.req_4(control, f_costo, f_inicial, f_final)
+    print("\n--- Resultado Requerimiento 4 ---")
+    print(f"Tiempo de ejecución (ms): {res['tiempo de ejecucion (ms)']}")
+    print(f"Filtro seleccionado del costo: {res['filtro']}")
+    print(f"Trayectos que cumplen el filtro: {res['total de viajes filtrados']}")
+    print(f"Barrio de origen: {res["barrio de origen"]}")
+    print(f"Barrio de destino: {res["barrio de destino"]}")
+    print(f"Distancia promedio (km): {res['distancia promedio (km)']}")
+    print(f"Duracion promedio por trayecto (min): {res['duracion promedio (min)']}")
+    print(f"Costo total promedio(USD): {res['costo promedio (USD)']}")
+    print("---------------------------------\n")
 
 def print_req_5(control):
     
